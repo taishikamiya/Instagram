@@ -16,8 +16,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "49"
             endingLineNumber = "49"
-            landmarkName = "imagePickerController(_:didFinishPickingMediaWithInfo:)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -32,8 +32,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "48"
             endingLineNumber = "48"
-            landmarkName = "imagePickerController(_:didFinishPickingMediaWithInfo:)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

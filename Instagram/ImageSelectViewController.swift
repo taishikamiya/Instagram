@@ -41,20 +41,20 @@ class ImageSelectViewController: UIViewController, UIImagePickerControllerDelega
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        
-        //写真を選択したときに呼ばれるメソッド
-        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-            //撮影/選択された画像を取得する
-            let image = info[.originalImage] as! UIImage
-            
-            //あとでCLImageEditorライブラリで加工する
-            print("DEBUG_PRINT: image = \(image)")
-          let editor = CLImageEditor(image: image)!
-          editor.delegate = self
-          picker.present(editor, animated: true, completion: nil)
-          
-        }
-    }
+     }
+   //写真を選択したときに呼ばれるメソッド
+   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+       //撮影/選択された画像を取得する
+       let image = info[.originalImage] as! UIImage
+       
+       //あとでCLImageEditorライブラリで加工する
+       print("DEBUG_PRINT: image = \(image)")
+     let editor = CLImageEditor(image: image)!
+     editor.delegate = self
+     picker.present(editor, animated: true, completion: nil)
+     
+   }
+    
 
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         //ImageSelectViewController画面を閉じてタブ画面に戻る
