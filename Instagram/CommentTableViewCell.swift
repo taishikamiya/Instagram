@@ -28,10 +28,10 @@ class CommentTableViewCell: UITableViewCell {
     func setCommentData(_ postData: PostData){
         
         //コメント表示
-        self.commentLabel.text = "\(postData.comment!)"
+       // self.commentLabel.text = "\(postData.comment!)"
         
         //名前表示
-        self.nameLabel.text = "\(postData.commentName!)"
+       // self.nameLabel.text = "\(postData.commentName!)"
     }
     
 }

@@ -9,12 +9,18 @@
 import UIKit
 import Firebase
 
-class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIScrollViewDelegate, PostCellDelegate {
+    
 
     @IBOutlet weak var tableView: UITableView!
     
     //投稿データを格納する配列
     var postArray: [PostData] = []
+    
+    //コメント入力用
+    let textField = UITextField()
+    var scrollView = UIScrollView()
+    let postTableViewCell = PostTableViewCell()
     
     //FireStoreのListener
     var listener: ListenerRegistration!
@@ -29,6 +35,34 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //カスタムセルを登録する
         let nib = UINib(nibName: "PostTableViewCell", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: "Cell")
+        
+         //テキストフィールド
+        textField.frame = CGRect(x:0, y:100, width: self.view.bounds.width, height: 50)
+        textField.placeholder = "コメント"
+        //keyboard type
+        textField.keyboardType = .default
+        //枠線
+        textField.borderStyle = .roundedRect
+        //改行ボタンの種類
+        textField.returnKeyType = .done
+        //テキスト全消去ボタン表示
+        textField.clearButtonMode = .always
+        //デフォルトで非表示
+        textField.isHidden = true
+        //UITextFieldを追加
+        self.view.addSubview(textField)
+        //デリゲード
+        textField.delegate = self
+        
+        //ScrollView
+        scrollView.delegate = self
+        scrollView.frame.size = CGSize(width: self.view.bounds.width, height: self.view.bounds.height)
+        scrollView.addSubview(self.textField)
+        
+        self.view.addSubview(self.scrollView)
+        
+        // postTableViewCell
+        postTableViewCell.commentDelegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -65,6 +99,8 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 tableView.reloadData()
             }
         }
+        
+        self.configureObserver()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -109,8 +145,54 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
             let postRef = Firestore.firestore().collection(Const.PostPath).document(postData.id)
             postRef.updateData(["likes": updateValue])
         }
-        
     }
+        
+    //returnが押されたときに呼ばれる.
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+      textField.resignFirstResponder()
+      return true
+    }
+        // Notificationを設定
+        func configureObserver() {
+              
+          let notification = NotificationCenter.default
+
+          notification.addObserver(
+            self,
+            selector: #selector(self.keyboardWillShow(notification:)),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+          )
+              
+          notification.addObserver(
+            self,
+            selector: #selector(self.keyboardWillHide(notification:)),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+          )
+        }
+        //キーボードが現れたときにViewをずらす
+        @objc func keyboardWillShow(notification: Notification?){
+            let rect = (notification?.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue
+            let duration: TimeInterval? = notification?.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double
+                UIView.animate(withDuration: duration!) {
+                self.view.transform = CGAffineTransform(translationX: 0, y: -(rect?.size.height)!)
+            }
+        }
+        // キーボードが消えたときにviewを戻す
+        @objc func keyboardWillHide(notification: Notification?) {
+          let duration: TimeInterval? = notification?.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? Double
+          UIView.animate(withDuration: duration!) {
+            self.view.transform = CGAffineTransform.identity
+          }
+        }
+        
+    func showTextField() {
+        textField.isHidden = false
+    }
+    
+
+    
     /*
     // MARK: - Navigation
 

@@ -23,8 +23,6 @@ class PostTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CommentTableViewCell
      //   cell.setPostData(commentArray[indexPath.row])
         
-
-        
         return cell
     }
     
@@ -37,6 +35,14 @@ class PostTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
     //comment
     @IBOutlet weak var commentButton: UIButton!
     @IBOutlet weak var commentTableView: UITableView!
+    
+    weak var commentDelegate: PostCellDelegate?
+    
+    @IBAction func handleCommentButton(_ sender: Any) {
+        //プロトコルの関数を呼ぶ
+        commentDelegate?.showTextField()
+    }
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -79,5 +85,10 @@ class PostTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
         }
         
     }
+    
+}
+
+protocol PostCellDelegate: class {
+    func showTextField()
     
 }
