@@ -20,7 +20,6 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     //コメント入力用
     let textField = UITextField()
     var scrollView = UIScrollView()
-    let postTableViewCell = PostTableViewCell()
     
     //FireStoreのListener
     var listener: ListenerRegistration!
@@ -37,7 +36,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         tableView.register(nib, forCellReuseIdentifier: "Cell")
         
          //テキストフィールド
-        textField.frame = CGRect(x:0, y:100, width: self.view.bounds.width, height: 50)
+        textField.frame = CGRect(x:0, y:500, width: self.view.bounds.width, height: 50)
         textField.placeholder = "コメント"
         //keyboard type
         textField.keyboardType = .default
@@ -54,15 +53,14 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //デリゲード
         textField.delegate = self
         
+        /*  ScrollViewが悪さをしているので一旦コメントアウト
         //ScrollView
         scrollView.delegate = self
         scrollView.frame.size = CGSize(width: self.view.bounds.width, height: self.view.bounds.height)
         scrollView.addSubview(self.textField)
         
         self.view.addSubview(self.scrollView)
-        
-        // postTableViewCell
-        postTableViewCell.commentDelegate = self
+        */
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -115,6 +113,8 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //セル内のボタンのアクションをソースコードで設定する
         cell.likeButton.addTarget(self, action:#selector(handleButton(_:forEvent:)), for: .touchUpInside)
         
+        //commentDelegate
+        cell.commentDelegate = self
         
         return cell
     }
@@ -191,6 +191,10 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         textField.isHidden = false
     }
     
+    func editTextField() {
+        //フォーカスする
+        textField.becomeFirstResponder()
+    }
 
     
     /*

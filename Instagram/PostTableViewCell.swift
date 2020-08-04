@@ -41,6 +41,8 @@ class PostTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
     @IBAction func handleCommentButton(_ sender: Any) {
         //プロトコルの関数を呼ぶ
         commentDelegate?.showTextField()
+        //アクティブにする
+        commentDelegate?.editTextField()
     }
     
     
@@ -90,5 +92,6 @@ class PostTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
 
 protocol PostCellDelegate: class {
     func showTextField()
+    func editTextField()
     
 }
