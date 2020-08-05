@@ -59,14 +59,15 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
                         let postData = PostData(document: document)
                         return  postData
                     }
-                    
-                    //commentDataを作成しcommentArrayの配列にする。
+  
+  /*
+                     //commentDataを作成しcommentArrayの配列にする。
                     self.commentArray = QuerySnapshot!.documents.map { document in
                         print("DEBUG_PRINT: document取得 \(document.documentID)")
                         let commentData = Comment(document: document)
                         return  commentData
                     }
-
+*/
                     // TableViewの表示を更新する
                     self.tableView.reloadData()
                 }
@@ -134,7 +135,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     //returnが押されたときに呼ばれる.
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
       textField.resignFirstResponder()
-        postComment()
+       postComment()
         return true
     }
         // Notificationを設定
@@ -199,6 +200,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //フォーカスする
         textField.becomeFirstResponder()
     }
+    
     
     func postComment() {
         //画像と投稿dataの保存場所を定義する

@@ -23,8 +23,8 @@ class PostTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
         func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
             //セルを取得してデータを設定する
             let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CommentTableViewCell
-//            cell.setPostData(commentArray[indexPath.row])
-            cell.setCommentData(commentArray[indexPath.row])
+     //       cell.setPostData(commentArray[indexPath.row])
+  //          cell.setCommentData(commentArray[indexPath.row])
 
             return cell
         }

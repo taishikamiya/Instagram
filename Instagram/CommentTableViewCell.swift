@@ -27,8 +27,8 @@ class CommentTableViewCell: UITableViewCell {
     //CommentDataの内容をセルに表示
     func setCommentData(_ postData: PostData){
         
-        let commentNumber = postData.comment.count
-        self.commentLabel.text = "\(postData.comment)"
+//        let commentNumber = postData.comment.count
+       self.commentLabel.text = "\(postData.comment)"
         self.nameLabel.text = "\(postData.name!)"
 
         //コメント表示
