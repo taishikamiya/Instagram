@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 import SVProgressHUD
 
-class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIScrollViewDelegate, PostCellDelegate {
+class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIScrollViewDelegate {
     
 
     @IBOutlet weak var tableView: UITableView!
@@ -60,14 +60,6 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
                         return  postData
                     }
   
-  /*
-                     //commentDataを作成しcommentArrayの配列にする。
-                    self.commentArray = QuerySnapshot!.documents.map { document in
-                        print("DEBUG_PRINT: document取得 \(document.documentID)")
-                        let commentData = Comment(document: document)
-                        return  commentData
-                    }
-*/
                     // TableViewの表示を更新する
                     self.tableView.reloadData()
                 }
@@ -98,8 +90,11 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //セル内のボタンのアクションをソースコードで設定する
         cell.likeButton.addTarget(self, action:#selector(handleButton(_:forEvent:)), for: .touchUpInside)
         
+        //セル内のコメントボタンのアクションをソースコードで設定する。
+        cell.commentButton.addTarget(self, action:#selector(handleCommentButton(_:forEvent:)), for: .touchUpInside)
+        
         //commentDelegate
-        cell.commentDelegate = self
+    //    cell.commentDelegate = self
         
         return cell
     }
@@ -132,46 +127,79 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
     }
         
+    @objc func handleCommentButton(_ sender:  UIButton, forEvent event: UIEvent) {
+        print("DEBUG_PRINT:  commentボタンがタップされました。")
+
+        //タップされたセルのインデックスを求める。
+        let touch = event.allTouches?.first
+        let point = touch!.location(in: self.tableView)
+        let indexPath = tableView.indexPathForRow(at: point)
+        
+        //配列からタップされたINDEXのデータを取りだす
+        let postData = postArray[indexPath!.row]
+
+        //likesを更新する
+        if let myid = Auth.auth().currentUser?.uid {
+            //更新データを作成する
+            var updateComment: [Comment] = []
+            updateComment[indexPath!.row].id = myid
+            updateComment[indexPath!.row].name = postData.name
+//            updateComment[indexPath!.row].date = FieldValue.serverTimestamp()
+            updateComment[indexPath!.row].comment = textField.text
+            
+            //commentに更新データを書き込む
+            let postRef = Firestore.firestore().collection(Const.PostPath).document(postData.id)
+            postRef.setValue("comment", forKey: textField.text!)
+            
+        }
+
+        self.showTextField()
+        self.editTextField()
+        
+    }
+    
     //returnが押されたときに呼ばれる.
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
       textField.resignFirstResponder()
        postComment()
         return true
     }
-        // Notificationを設定
-        func configureObserver() {
-              
-          let notification = NotificationCenter.default
+    
+    // Notificationを設定
+    func configureObserver() {
+          
+      let notification = NotificationCenter.default
 
-          notification.addObserver(
-            self,
-            selector: #selector(self.keyboardWillShow(notification:)),
-            name: UIResponder.keyboardWillShowNotification,
-            object: nil
-          )
-              
-          notification.addObserver(
-            self,
-            selector: #selector(self.keyboardWillHide(notification:)),
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil
-          )
+      notification.addObserver(
+        self,
+        selector: #selector(self.keyboardWillShow(notification:)),
+        name: UIResponder.keyboardWillShowNotification,
+        object: nil
+      )
+          
+      notification.addObserver(
+        self,
+        selector: #selector(self.keyboardWillHide(notification:)),
+        name: UIResponder.keyboardWillHideNotification,
+        object: nil
+      )
+    }
+    //キーボードが現れたときにViewをずらす
+    @objc func keyboardWillShow(notification: Notification?){
+        let rect = (notification?.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue
+        let duration: TimeInterval? = notification?.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double
+            UIView.animate(withDuration: duration!) {
+            self.view.transform = CGAffineTransform(translationX: 0, y: -(rect?.size.height)!)
         }
-        //キーボードが現れたときにViewをずらす
-        @objc func keyboardWillShow(notification: Notification?){
-            let rect = (notification?.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue
-            let duration: TimeInterval? = notification?.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double
-                UIView.animate(withDuration: duration!) {
-                self.view.transform = CGAffineTransform(translationX: 0, y: -(rect?.size.height)!)
-            }
-        }
-        // キーボードが消えたときにviewを戻す
-        @objc func keyboardWillHide(notification: Notification?) {
-          let duration: TimeInterval? = notification?.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? Double
-          UIView.animate(withDuration: duration!) {
-            self.view.transform = CGAffineTransform.identity
-          }
-        }
+    }
+    
+    // キーボードが消えたときにviewを戻す
+    @objc func keyboardWillHide(notification: Notification?) {
+      let duration: TimeInterval? = notification?.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? Double
+      UIView.animate(withDuration: duration!) {
+        self.view.transform = CGAffineTransform.identity
+      }
+    }
         
     func showTextField() {
         

@@ -58,9 +58,6 @@
                             <constraint firstAttribute="height" constant="40" id="lg3-xJ-ht2"/>
                         </constraints>
                         <state key="normal" title="Button" image="btn"/>
-                        <connections>
-                            <action selector="handleCommentButton:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="CRu-r4-cML"/>
-                        </connections>
                     </button>
                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="s9Y-pd-yb8">
                         <rect key="frame" x="10" y="437.5" width="317" height="91.5"/>
