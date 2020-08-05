@@ -19,9 +19,6 @@ class PostData: NSObject {
     var isLiked: Bool = false
 
     //コメント
-//    var comment: String?
-//    var commentName: String?
-
     var comment: [Comment] = []
     
     init(document: QueryDocumentSnapshot) {

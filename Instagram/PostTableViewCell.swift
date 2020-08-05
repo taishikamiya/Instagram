@@ -13,19 +13,21 @@ class PostTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
     
     //コメントデータを格納する配列
     var commentArray: [PostData] = []
+//        var commentArray: [Comment] = []
+
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return commentArray.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        //セルを取得してデータを設定する
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CommentTableViewCell
-     //   cell.setPostData(commentArray[indexPath.row])
+        func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+            return commentArray.count
+        }
         
-        return cell
-    }
-    
+        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+            //セルを取得してデータを設定する
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CommentTableViewCell
+//            cell.setPostData(commentArray[indexPath.row])
+            cell.setCommentData(commentArray[indexPath.row])
+
+            return cell
+        }
 
     @IBOutlet weak var postImageView: UIImageView!
     @IBOutlet weak var likeButton: UIButton!
@@ -85,6 +87,15 @@ class PostTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
             let buttonImage = UIImage(named:  "like_none")
             self.likeButton.setImage(buttonImage, for: .normal)
         }
+        
+        //コメントの表示
+        /*
+        let commentNumber = postData.comment.count
+        let commentData: [Comment] = postData.comment
+        for Com in commentData {
+                    print("DEBUG_PRINT: \(Com)")
+        }
+*/
         
     }
     

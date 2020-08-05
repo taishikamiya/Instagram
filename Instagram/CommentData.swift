@@ -11,9 +11,28 @@ import Firebase
 
 class Comment : NSObject {
     
+    var id: String
+    var name: String?
+
     var comment: String?
-    var userId: String?
-    var timeStamp: Int = 0
+//    var userId: String?
+    var date: Date?
+
+//    var timeStamp: Int = 0
+    
+    init(document: QueryDocumentSnapshot) {
+//        self.userId = document.documentID
+        let postDic = document.data()
+
+        self.id = document.documentID
+
+        self.name = postDic["name"] as? String
+
+        self.comment =  postDic["comment"] as? String
+           
+        let timestamp = postDic["date"] as? Timestamp
+        self.date = timestamp?.dateValue()
+    }
     
 }
 

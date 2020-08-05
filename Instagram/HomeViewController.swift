@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import SVProgressHUD
 
 class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIScrollViewDelegate, PostCellDelegate {
     
@@ -16,10 +17,11 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     //投稿データを格納する配列
     var postArray: [PostData] = []
+    //コメントデータを格納する配列
+    var commentArray: [Comment] = []
     
     //コメント入力用
     let textField = UITextField()
-    var scrollView = UIScrollView()
     
     //FireStoreのListener
     var listener: ListenerRegistration!
@@ -34,33 +36,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //カスタムセルを登録する
         let nib = UINib(nibName: "PostTableViewCell", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: "Cell")
-        
-         //テキストフィールド
-        textField.frame = CGRect(x:0, y:500, width: self.view.bounds.width, height: 50)
-        textField.placeholder = "コメント"
-        //keyboard type
-        textField.keyboardType = .default
-        //枠線
-        textField.borderStyle = .roundedRect
-        //改行ボタンの種類
-        textField.returnKeyType = .done
-        //テキスト全消去ボタン表示
-        textField.clearButtonMode = .always
-        //デフォルトで非表示
-        textField.isHidden = true
-        //UITextFieldを追加
-        self.view.addSubview(textField)
-        //デリゲード
-        textField.delegate = self
-        
-        /*  ScrollViewが悪さをしているので一旦コメントアウト
-        //ScrollView
-        scrollView.delegate = self
-        scrollView.frame.size = CGSize(width: self.view.bounds.width, height: self.view.bounds.height)
-        scrollView.addSubview(self.textField)
-        
-        self.view.addSubview(self.scrollView)
-        */
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -83,6 +59,14 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
                         let postData = PostData(document: document)
                         return  postData
                     }
+                    
+                    //commentDataを作成しcommentArrayの配列にする。
+                    self.commentArray = QuerySnapshot!.documents.map { document in
+                        print("DEBUG_PRINT: document取得 \(document.documentID)")
+                        let commentData = Comment(document: document)
+                        return  commentData
+                    }
+
                     // TableViewの表示を更新する
                     self.tableView.reloadData()
                 }
@@ -150,7 +134,8 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     //returnが押されたときに呼ばれる.
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
       textField.resignFirstResponder()
-      return true
+        postComment()
+        return true
     }
         // Notificationを設定
         func configureObserver() {
@@ -188,12 +173,51 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
         
     func showTextField() {
-        textField.isHidden = false
+        
+         //テキストフィールド
+        textField.frame = CGRect(x:0, y:self.view.bounds.height-50, width: self.view.bounds.width, height: 50)
+        textField.placeholder = "コメント"
+        //keyboard type
+        textField.keyboardType = .default
+        //枠線
+        textField.borderStyle = .roundedRect
+        //改行ボタンの種類
+        textField.returnKeyType = .done
+        //テキスト全消去ボタン表示
+        textField.clearButtonMode = .always
+        //デフォルトで非表示
+//        textField.isHidden = true
+        //UITextFieldを追加
+        self.view.addSubview(textField)
+        //デリゲード
+        textField.delegate = self
+        
+//        textField.isHidden = false
     }
     
     func editTextField() {
         //フォーカスする
         textField.becomeFirstResponder()
+    }
+    
+    func postComment() {
+        //画像と投稿dataの保存場所を定義する
+        let postRef = Firestore.firestore().collection(Const.PostPath).document()
+        //HUDで投稿処理中の表示を開始
+        SVProgressHUD.show()
+
+        //FireSoreに投稿dataを保存する
+        let name = Auth.auth().currentUser?.displayName
+        let postDic = [
+            "name": name!,
+            "comment": self.textField.text!,
+            "date": FieldValue.serverTimestamp(),
+        ] as [String: Any]
+        postRef.setData(postDic)
+        //HUDで投稿完了を表示
+        SVProgressHUD.showSuccess(withStatus: "投稿しました")
+        //投稿処理が完了したので先頭に戻る
+        UIApplication.shared.windows.first{ $0.isKeyWindow }?.rootViewController?.dismiss(animated: true, completion: nil)
     }
 
     
