@@ -20,6 +20,8 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     //コメントデータを格納する配列
     var commentArray: [Comment] = []
     
+    var commentPostData: PostData?
+    
     //コメント入力用
     let textField = UITextField()
     
@@ -36,7 +38,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //カスタムセルを登録する
         let nib = UINib(nibName: "PostTableViewCell", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: "Cell")
-
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -136,22 +138,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let indexPath = tableView.indexPathForRow(at: point)
         
         //配列からタップされたINDEXのデータを取りだす
-        let postData = postArray[indexPath!.row]
-
-        //likesを更新する
-        if let myid = Auth.auth().currentUser?.uid {
-            //更新データを作成する
-            var updateComment: [Comment] = []
-            updateComment[indexPath!.row].id = myid
-            updateComment[indexPath!.row].name = postData.name
-//            updateComment[indexPath!.row].date = FieldValue.serverTimestamp()
-            updateComment[indexPath!.row].comment = textField.text
-            
-            //commentに更新データを書き込む
-            let postRef = Firestore.firestore().collection(Const.PostPath).document(postData.id)
-            postRef.setValue("comment", forKey: textField.text!)
-            
-        }
+        commentPostData = postArray[indexPath!.row]
 
         self.showTextField()
         self.editTextField()
@@ -201,8 +188,8 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
       }
     }
         
+    
     func showTextField() {
-        
          //テキストフィールド
         textField.frame = CGRect(x:0, y:self.view.bounds.height-50, width: self.view.bounds.width, height: 50)
         textField.placeholder = "コメント"
@@ -221,7 +208,6 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //デリゲード
         textField.delegate = self
         
-//        textField.isHidden = false
     }
     
     func editTextField() {
@@ -232,22 +218,43 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func postComment() {
         //画像と投稿dataの保存場所を定義する
-        let postRef = Firestore.firestore().collection(Const.PostPath).document()
-        //HUDで投稿処理中の表示を開始
-        SVProgressHUD.show()
+        //let postRef = Firestore.firestore().collection(Const.PostPath).document()
+        
+        
+        //commentsを更新する
+        if let myid = Auth.auth().currentUser?.uid {
+            //更新データを作成する
+            var updateValue: FieldValue
+            if ((commentPostData?.comment) != nil) {
+                //すでにコメントがある場合
+            //    updateValue =  FieldValue.arrayRemove([myid])
+            } else {
+                //今回新たにコメントボタンを押した場合はmyidを追加する更新データを作成
+                updateValue = FieldValue.arrayUnion([myid])
 
-        //FireSoreに投稿dataを保存する
-        let name = Auth.auth().currentUser?.displayName
-        let postDic = [
-            "name": name!,
-            "comment": self.textField.text!,
-            "date": FieldValue.serverTimestamp(),
-        ] as [String: Any]
-        postRef.setData(postDic)
-        //HUDで投稿完了を表示
-        SVProgressHUD.showSuccess(withStatus: "投稿しました")
-        //投稿処理が完了したので先頭に戻る
-        UIApplication.shared.windows.first{ $0.isKeyWindow }?.rootViewController?.dismiss(animated: true, completion: nil)
+            //HUDで投稿処理中の表示を開始
+            SVProgressHUD.show()
+
+            let postRef = Firestore.firestore().collection(Const.PostPath).document(commentPostData!.id)
+                
+            postRef.updateData(["comments": updateValue])
+
+            //FireSoreに投稿dataを保存する
+            let name = Auth.auth().currentUser?.displayName
+            let postDic = [
+                "name": name!,
+                "comment": self.textField.text!,
+                "date": FieldValue.serverTimestamp(),
+            ] as [String: Any]
+            postRef.setData(postDic)
+            //HUDで投稿完了を表示
+            SVProgressHUD.showSuccess(withStatus: "投稿しました")
+            //投稿処理が完了したので先頭に戻る
+            UIApplication.shared.windows.first{ $0.isKeyWindow }?.rootViewController?.dismiss(animated: true, completion: nil)
+            }
+
+        }
+
     }
 
     
