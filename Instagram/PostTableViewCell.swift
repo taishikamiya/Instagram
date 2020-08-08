@@ -40,14 +40,6 @@ class PostTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
     
     weak var commentDelegate: PostCellDelegate?
 
-    /*
-    @IBAction func handleCommentButton(_ sender: Any) {
-        //プロトコルの関数を呼ぶ
-        commentDelegate?.showTextField()
-        //アクティブにする
-        commentDelegate?.editTextField()
-    }
-    */
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -103,7 +95,7 @@ class PostTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
 }
 
 protocol PostCellDelegate: class {
-    func showTextField()
-    func editTextField()
+//    func showTextField()
+//    func editTextField()
     
 }
