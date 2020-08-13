@@ -12,22 +12,21 @@ import FirebaseUI
 class PostTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDelegate {
     
     //コメントデータを格納する配列
-    var commentArray: [PostData] = []
-//        var commentArray: [Comment] = []
-
+    var commentArray: [Comment] = []
     
-        func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
             return commentArray.count
-        }
+    }
         
-        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-            //セルを取得してデータを設定する
-            let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CommentTableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        //セルを取得してデータを設定する
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CommentTableViewCell
      //       cell.setPostData(commentArray[indexPath.row])
   //          cell.setCommentData(commentArray[indexPath.row])
+            //HomeViewControllerからcommentDataを持ってくる？
 
             return cell
-        }
+    }
 
     @IBOutlet weak var postImageView: UIImageView!
     @IBOutlet weak var likeButton: UIButton!
@@ -82,6 +81,9 @@ class PostTableViewCell: UITableViewCell, UITableViewDataSource, UITableViewDele
         }
         
         //コメントの表示
+        if !postData.comment.isEmpty {
+            
+        }
         /*
         let commentNumber = postData.comment.count
         let commentData: [Comment] = postData.comment
