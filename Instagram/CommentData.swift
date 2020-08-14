@@ -19,12 +19,14 @@ class Comment : NSObject {
     var date: Date?
 
 //    var timeStamp: Int = 0
-    
-    init(document: QueryDocumentSnapshot) {
-//        self.userId = document.documentID
-        let postDic = document.data()
 
-        self.id = document.documentID
+    init(dict: Dictionary<String, Any>) {
+        
+//        let postDic = document.data()
+        let postDic = dict.data()
+
+//        self.id = document.documentID
+        self.id = dict.documentID
 
         self.name = postDic["name"] as? String
 

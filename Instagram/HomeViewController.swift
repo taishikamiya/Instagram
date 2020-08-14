@@ -62,14 +62,11 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
                         print("DEBUG_PRINT: document取得 \(document.documentID)")
                         let postData = PostData(document: document)
                         return  postData
-
-                    
-//                    let commentRef = Firestore.firestore().collection(Const.CommentPath).order(by: "date", descending: true)
+                    }
                     
                     // TableViewの表示を更新する
                     self.tableView.reloadData()
                 }
-            }
         } else {
             //未ログイン
             if listener != nil {
@@ -84,13 +81,10 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.configureObserver()
     }
     
-        
         func getCommentData(){
             
             for post in postArray {
                 let postId = post.comment
-                
-                
                 
             }
                 //postにcommnetIdが含まれるかどうかをチェック
@@ -108,8 +102,6 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
                         }
                     }
                 }
-        
-            
         }
         
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -266,9 +258,8 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
             //HUDで投稿処理中の表示を開始
             SVProgressHUD.show()
 
-//            let postRef = Firestore.firestore().collection(Const.CommentPath).document(commentPostData!.id)
-
             let commentRef = Firestore.firestore().collection(Const.CommentPath).document()
+
             //投稿のidを生成
             let commentId = commentRef.documentID
 
@@ -281,18 +272,14 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 "comment": self.textField.text!,
                 "date": FieldValue.serverTimestamp(),
             ] as [String: Any]
-//            postRef.updateData([commentId: postDic])
-//            postRef.setData(postDic) // setData=上書き
 
-//            commentRef.setData(postDic)
             postRef.setData(postDic)
-//            postRef.updateData(["comment":[commentId: FieldValue.serverTimestamp()]])
             
             //HUDで投稿完了を表示
             SVProgressHUD.showSuccess(withStatus: "投稿しました")
+
             //投稿処理が完了したので先頭に戻る
             UIApplication.shared.windows.first{ $0.isKeyWindow }?.rootViewController?.dismiss(animated: true, completion: nil)
-      //      }
 
         }
 

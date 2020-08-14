@@ -45,8 +45,17 @@ class PostData: NSObject {
             
         }
         
-        if let _comment = postDic["comment"] as? [Comment] {
-            self.comment = _comment
+        //MARK: change here
+        if let data = postDic["comment"] as? Dictionary<String, Any> {
+            
+            data.forEach { (_, commentDict) in
+                
+                if let dict = commentDict as? Dictionary<String, Any> {
+                    let comment = Comment(dict: dict)
+                    self.comment.append(comment)
+                }
+            }
+            
         }
         
     }
